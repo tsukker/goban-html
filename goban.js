@@ -20,25 +20,31 @@ for (let i = 0; i < linesNumber; ++i) {
 
 console.log(xyval)
 
-context.beginPath();
-for (let [i, val] of xyval.entries()) {
-  context.moveTo(val, xyval[0]);
-  context.lineTo(val, xyval[linesNumber - 1]);
-  context.moveTo(xyval[0], val);
-  context.lineTo(xyval[linesNumber - 1], val);
-}
-context.stroke();
+function initializeGoban() {
+  context.clearRect(0, 0, canvas.width / retinaScale, canvas.height / retinaScale);
+  context.beginPath();
+  for (let [i, val] of xyval.entries()) {
+    context.moveTo(val, xyval[0]);
+    context.lineTo(val, xyval[linesNumber - 1]);
+    context.moveTo(xyval[0], val);
+    context.lineTo(xyval[linesNumber - 1], val);
+  }
+  context.stroke();
 
-let starXyval = [3, 9, 15];
-for (let xIndex of starXyval) {
-  let x = cellLength / 2 * (xIndex * 2 + 1);
-  for (let yIndex of starXyval) {
-    let y = cellLength / 2 * (yIndex * 2 + 1);
-    context.beginPath();
-    context.arc(x, y, 3.0, 0, Math.PI * 2);
-    context.fill();
+  let starXyval = [3, 9, 15];
+  context.fillStyle = 'black';
+  for (let xIndex of starXyval) {
+    let x = cellLength / 2 * (xIndex * 2 + 1);
+    for (let yIndex of starXyval) {
+      let y = cellLength / 2 * (yIndex * 2 + 1);
+      context.beginPath();
+      context.arc(x, y, 3.0, 0, Math.PI * 2);
+      context.fill();
+    }
   }
 }
+
+initializeGoban();
 
 let stoneSemidiameter = cellLength / 2 - 0.5;
 function putStone(xIndex, yIndex, color) {

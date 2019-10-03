@@ -21,12 +21,27 @@ for (let i = 0; i < linesNumber; ++i) {
 
 console.log(xyval)
 
+class Stone {
+  constructor(xIndex, yIndex, color, status = 'placed') {
+    this.xIndex = xIndex;
+    this.yIndex = yIndex;
+    this.color = color;
+    this.status = status;  // 'placed', 'preview', 'notplaced', 'removed'
+  }
+}
+
+/*
+* stones[yIndex][xIndex]: null or stone.status: 'placed'
+stonePreview: null
+* notes: all null
+*/
 class Goban {
   constructor() {
     //this.hands = new Hands();
     this.inputMode = 1;
-    this.stones = (new Array(linesNumber)).fill(undefined).map(() => (new Array(linesNumber)).fill(undefined));
-    this.notes = (new Array(linesNumber)).fill(undefined).map(() => (new Array(linesNumber)).fill(''));
+    this.stones = (new Array(linesNumber)).fill(null).map(() => (new Array(linesNumber)).fill(null));
+    this.stonePreview = null;
+    this.notes = (new Array(linesNumber)).fill(null).map(() => (new Array(linesNumber)).fill(null));
     this.initializeBoard();
   }
 
@@ -53,9 +68,51 @@ class Goban {
       }
     }
   }
+
+  drawStone(stone) {
+    let x = cellLength / 2 * (stone.xIndex * 2 + 1);
+    let y = cellLength / 2 * (stone.yIndex * 2 + 1);
+    context.save();
+    context.fillStyle = stone.color;
+    context.beginPath();
+    context.arc(x, y, stoneSemidiameter, 0, Math.PI * 2);
+    context.fill();
+    context.restore();
+    if (stone.color == 'white') {
+      context.beginPath();
+      context.arc(x, y, stoneSemidiameter, 0, Math.PI * 2);
+      context.stroke();
+    }
+  }
+
+  updateBoard() {
+    this.initializeBoard();
+    for (let yIndex = 0; yIndex < linesNumber; ++yIndex) {
+      for (let xIndex = 0; xIndex < linesNumber; ++xIndex) {
+        if (this.stones[yIndex][xIndex] !== null) {
+          this.drawStone(this.stones[yIndex][xIndex]);
+        }
+      }
+    }
+  }
+
+  addStone(stone) {
+    console.assert(stone.status == 'placed' || stone.status == 'preview', 'stone.status is unexpected: ' + stone.status);
+    if (stone.status == 'placed') {
+      this.stones[stone.yIndex][stone.xIndex] = stone;
+    }
+    this.updateBoard();
+  }
+
+  addStonePreview(stone) {
+    console.assert(stone.status == 'preview', "stone.status must be 'preview'");
+    this.stonePreview = stone;
+  }
 }
 
 let goban = new Goban();
+goban.addStone(new Stone(0, 0, 'white'));
+goban.addStone(new Stone(1, 0, 'black'));
 
 function putStone(xIndex, yIndex, color) {
   let x = cellLength / 2 * (xIndex * 2 + 1);

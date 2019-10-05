@@ -32,7 +32,7 @@ class Stone {
 
 /*
 * stones[yIndex][xIndex]: null or stone.status: 'placed'
-stonePreview: null
+* stonePreview: not null only on empty cell
 * notes: all null
 */
 class Goban {
@@ -73,12 +73,18 @@ class Goban {
     let x = cellLength / 2 * (stone.xIndex * 2 + 1);
     let y = cellLength / 2 * (stone.yIndex * 2 + 1);
     context.save();
-    context.fillStyle = stone.color;
+    if (stone.status === 'placed') {
+      context.fillStyle = stone.color;
+    } else if (stone.status === 'preview') {
+      context.fillStyle = `rgba(0, 0, 0, ${stone.color === 'black' ? 0.4 : 0.1})`;
+    } else {
+      assert(false);
+    }
     context.beginPath();
     context.arc(x, y, stoneSemidiameter, 0, Math.PI * 2);
     context.fill();
     context.restore();
-    if (stone.color == 'white') {
+    if (stone.status === 'placed' && stone.color === 'white') {
       context.beginPath();
       context.arc(x, y, stoneSemidiameter, 0, Math.PI * 2);
       context.stroke();
@@ -94,10 +100,17 @@ class Goban {
         }
       }
     }
+    if (this.stonePreview !== null) {
+      let yIndex = this.stonePreview.yIndex;
+      let xIndex = this.stonePreview.xIndex;
+      if (this.stones[yIndex][xIndex] === null) {
+        this.drawStone(this.stonePreview);
+      }
+    }
   }
 
   addStone(stone) {
-    console.assert(stone.status == 'placed' || stone.status == 'preview', 'stone.status is unexpected: ' + stone.status);
+    console.assert(stone.status === 'placed', "stone.status must be 'placed'");
     if (stone.status == 'placed') {
       this.stones[stone.yIndex][stone.xIndex] = stone;
     }
@@ -105,28 +118,13 @@ class Goban {
   }
 
   addStonePreview(stone) {
-    console.assert(stone.status == 'preview', "stone.status must be 'preview'");
+    console.assert(stone.status === 'preview', "stone.status must be 'preview'");
     this.stonePreview = stone;
+    this.updateBoard();
   }
 }
 
 let goban = new Goban();
 goban.addStone(new Stone(0, 0, 'white'));
 goban.addStone(new Stone(1, 0, 'black'));
-
-function putStone(xIndex, yIndex, color) {
-  let x = cellLength / 2 * (xIndex * 2 + 1);
-  let y = cellLength / 2 * (yIndex * 2 + 1);
-  context.fillStyle = color;
-  context.beginPath();
-  context.arc(x, y, stoneSemidiameter, 0, Math.PI * 2);
-  context.fill();
-  if (color == 'white') {
-    context.beginPath();
-    context.arc(x, y, stoneSemidiameter, 0, Math.PI * 2);
-    context.stroke();
-  }
-}
-
-putStone(0, 0, 'white');
-putStone(1, 0, 'black');
+goban.addStonePreview(new Stone(2, 2, 'black', 'preview'));

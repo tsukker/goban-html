@@ -91,12 +91,42 @@ class Goban {
     }
   }
 
+  drawNote(note, xIndex, yIndex) {
+    let x = cellLength / 2 * (xIndex * 2 + 1);
+    let y = cellLength / 2 * (yIndex * 2 + 1);
+    context.save();
+    let fontSize = [-1, 28, 24, 20][note.length];
+    context.font = fontSize.toString() + 'px sans-serif';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillStyle = 'black';
+    if (this.stones[yIndex][xIndex] !== null) {
+      let bgStone = this.stones[yIndex][xIndex];
+      if (bgStone.status === 'placed') {
+        if (bgStone.color === 'black') {
+          context.fillStyle = 'white';
+        }
+      }
+    } else {
+      context.clearRect(x - cellLength / 2, y - cellLength / 2, cellLength, cellLength);
+    }
+    context.fillText(note, x, y);
+    context.restore();
+  }
+
   updateBoard() {
     this.initializeBoard();
     for (let yIndex = 0; yIndex < linesNumber; ++yIndex) {
       for (let xIndex = 0; xIndex < linesNumber; ++xIndex) {
         if (this.stones[yIndex][xIndex] !== null) {
           this.drawStone(this.stones[yIndex][xIndex]);
+        }
+      }
+    }
+    for (let yIndex = 0; yIndex < linesNumber; ++yIndex) {
+      for (let xIndex = 0; xIndex < linesNumber; ++xIndex) {
+        if (this.notes[yIndex][xIndex] !== null) {
+          this.drawNote(this.notes[yIndex][xIndex], xIndex, yIndex);
         }
       }
     }
@@ -122,9 +152,31 @@ class Goban {
     this.stonePreview = stone;
     this.updateBoard();
   }
+
+  checkNote(note) {
+    if (note.length > 3) {
+      return false;
+    }
+    if (note.length == 1) {
+      return true;
+    }
+    return RegExp(/^[0-9]*$/).test(note);
+  }
+
+  addNote(note, x, y) {
+    console.assert(this.checkNote(note));
+    this.notes[y][x] = note;
+    this.updateBoard();
+  }
 }
 
 let goban = new Goban();
 goban.addStone(new Stone(0, 0, 'white'));
 goban.addStone(new Stone(1, 0, 'black'));
-goban.addStonePreview(new Stone(2, 2, 'black', 'preview'));
+goban.addNote('A', 0, 0);
+goban.addNote('B', 1, 0);
+
+//goban.addStonePreview(new Stone(2, 2, 'white', 'preview'));
+goban.addStonePreview(new Stone(3, 2, 'black', 'preview'));
+goban.addNote('C', 2, 2);
+goban.addNote('D', 3, 2);

@@ -217,10 +217,12 @@ class Goban {
 
   onMouseMove(e) {
     let closest = this.getClosestPointIfMouseIsOn(e);
-    if (closest.mouseIsOn && this.stones[closest.yIndex][closest.xIndex] === null) {
-      this.addStonePreview(new Stone(closest.xIndex, closest.yIndex, this.nextColor, 'preview'));
-    } else {
+    if (!closest.mouseIsOn) {
       this.clearStonePreview();
+      return;
+    }
+    if (this.stones[closest.yIndex][closest.xIndex] === null) {
+      this.addStonePreview(new Stone(closest.xIndex, closest.yIndex, this.nextColor, 'preview'));
     }
   }
 
@@ -231,7 +233,10 @@ class Goban {
   onMouseUp(e) {
     console.log(e);
     let closest = this.getClosestPointIfMouseIsOn(e);
-    if (closest.mouseIsOn && this.stones[closest.yIndex][closest.xIndex] === null) {
+    if (!closest.mouseIsOn) {
+      return;
+    }
+    if (this.stones[closest.yIndex][closest.xIndex] === null) {
       this.addStone(new Stone(closest.xIndex, closest.yIndex, this.nextColor, 'placed'));
       this.switchNextColor();
     }
@@ -239,13 +244,20 @@ class Goban {
 
   onDoubleClick(e) {
     let closest = this.getClosestPointIfMouseIsOn(e);
-    if (closest.mouseIsOn && this.stones[closest.yIndex][closest.xIndex] !== null) {
+    if (!closest.mouseIsOn) {
+      return;
+    }
+    if (this.stones[closest.yIndex][closest.xIndex] !== null) {
       this.removeStone(closest.xIndex, closest.yIndex);
     }
   }
 }
 
 let goban = new Goban();
+canvas.addEventListener('mousemove', e => { goban.onMouseMove(e); }, false);
+canvas.addEventListener('mouseout', e => { goban.onMouseOut(e); }, false);
+canvas.addEventListener('mouseup', e => { goban.onMouseUp(e); }, false);
+canvas.addEventListener('dblclick', e => { goban.onDoubleClick(e); }, false);
 
 let test = function () {
   goban.addStone(new Stone(0, 0, 'white'));
@@ -264,7 +276,3 @@ let test = function () {
   goban.addNote('D', 3, 2);
 };
 
-canvas.addEventListener('mousemove', e => { goban.onMouseMove(e); }, false);
-canvas.addEventListener('mouseout', e => { goban.onMouseOut(e); }, false);
-canvas.addEventListener('mouseup', e => { goban.onMouseUp(e); }, false);
-canvas.addEventListener('dblclick', e => { goban.onDoubleClick(e); }, false);

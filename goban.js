@@ -86,7 +86,7 @@ class Goban {
     context.restore();
     if (stone.status === 'placed' && stone.color === 'white') {
       context.beginPath();
-      context.arc(x, y, stoneSemidiameter, 0, Math.PI * 2);
+      context.arc(x, y, stoneSemidiameter - 0.5, 0, Math.PI * 2);
       context.stroke();
     }
   }

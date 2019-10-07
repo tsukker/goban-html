@@ -95,7 +95,7 @@ class Goban {
     let x = cellLength / 2 * (xIndex * 2 + 1);
     let y = cellLength / 2 * (yIndex * 2 + 1);
     context.save();
-    let fontSize = [-1, 28, 24, 20][note.length];
+    let fontSize = [-1, 27, 23, 19][note.length];
     context.font = fontSize.toString() + 'px sans-serif';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
@@ -153,7 +153,7 @@ class Goban {
     this.updateBoard();
   }
 
-  checkNote(note) {
+  isValidNote(note) {
     if (note.length > 3) {
       return false;
     }
@@ -164,7 +164,7 @@ class Goban {
   }
 
   addNote(note, x, y) {
-    console.assert(this.checkNote(note));
+    console.assert(this.isValidNote(note));
     this.notes[y][x] = note;
     this.updateBoard();
   }
@@ -172,9 +172,17 @@ class Goban {
 
 let goban = new Goban();
 goban.addStone(new Stone(0, 0, 'white'));
-goban.addStone(new Stone(1, 0, 'black'));
-goban.addNote('A', 0, 0);
-goban.addNote('B', 1, 0);
+goban.addStone(new Stone(1, 0, 'white'));
+goban.addStone(new Stone(2, 0, 'white'));
+goban.addStone(new Stone(0, 1, 'black'));
+goban.addStone(new Stone(1, 1, 'black'));
+goban.addStone(new Stone(2, 1, 'black'));
+goban.addNote('7', 0, 0);
+goban.addNote('77', 1, 0);
+goban.addNote('777', 2, 0);
+goban.addNote('7', 0, 1);
+goban.addNote('77', 1, 1);
+goban.addNote('777', 2, 1);
 
 //goban.addStonePreview(new Stone(2, 2, 'white', 'preview'));
 goban.addStonePreview(new Stone(3, 2, 'black', 'preview'));

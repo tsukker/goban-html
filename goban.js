@@ -158,6 +158,11 @@ class Goban {
     this.updateBoard();
   }
 
+  removeStone(xIndex, yIndex) {
+    this.stones[yIndex][xIndex] = null;
+    this.updateBoard();
+  }
+
   addStonePreview(stone) {
     console.assert(stone.status === 'preview', "stone.status must be 'preview'");
     this.stonePreview = stone;
@@ -231,6 +236,13 @@ class Goban {
       this.switchNextColor();
     }
   }
+
+  onDoubleClick(e) {
+    let closest = this.getClosestPointIfMouseIsOn(e);
+    if (closest.mouseIsOn && this.stones[closest.yIndex][closest.xIndex] !== null) {
+      this.removeStone(closest.xIndex, closest.yIndex);
+    }
+  }
 }
 
 let goban = new Goban();
@@ -255,3 +267,4 @@ let test = function () {
 canvas.addEventListener('mousemove', e => { goban.onMouseMove(e); }, false);
 canvas.addEventListener('mouseout', e => { goban.onMouseOut(e); }, false);
 canvas.addEventListener('mouseup', e => { goban.onMouseUp(e); }, false);
+canvas.addEventListener('dblclick', e => { goban.onDoubleClick(e); }, false);

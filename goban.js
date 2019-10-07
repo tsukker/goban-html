@@ -212,7 +212,7 @@ class Goban {
 
   onMouseMove(e) {
     let closest = this.getClosestPointIfMouseIsOn(e);
-    if (closest.mouseIsOn) {
+    if (closest.mouseIsOn && this.stones[closest.yIndex][closest.xIndex] === null) {
       this.addStonePreview(new Stone(closest.xIndex, closest.yIndex, this.nextColor, 'preview'));
     } else {
       this.clearStonePreview();
@@ -226,7 +226,7 @@ class Goban {
   onMouseUp(e) {
     console.log(e);
     let closest = this.getClosestPointIfMouseIsOn(e);
-    if (closest.mouseIsOn) {
+    if (closest.mouseIsOn && this.stones[closest.yIndex][closest.xIndex] === null) {
       this.addStone(new Stone(closest.xIndex, closest.yIndex, this.nextColor, 'placed'));
       this.switchNextColor();
     }

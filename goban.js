@@ -31,6 +31,14 @@ class Stone {
   }
 }
 
+class Hand {
+  constructor(placedStone, removedStones) {
+    this.placedStone = placedStone;
+    this.removedStones = removedStones;
+    this.status = null;  // 'evaluated', 'preview', 'unevaluated'
+  }
+}
+
 /*
 * stones[yIndex][xIndex]: null or stone.status: 'placed'
 * stonePreview: not null only on empty cell
@@ -44,6 +52,7 @@ class Goban {
     this.stones = (new Array(linesNumber)).fill(null).map(() => (new Array(linesNumber)).fill(null));
     this.stonePreview = null;
     this.notes = (new Array(linesNumber)).fill(null).map(() => (new Array(linesNumber)).fill(''));
+    this.pointNoteBeEntered = { xIndex: 0, yIndex: 0 };
     this.initializeBoard();
   }
 
@@ -238,6 +247,10 @@ class Goban {
     if (!closest.mouseIsOn) {
       return;
     }
+    if (this.getInputMode() === 'text') {
+      return;
+    }
+    console.assert(this.getInputMode() === 'normal');
     if (this.stones[closest.yIndex][closest.xIndex] === null) {
       this.addStone(new Stone(closest.xIndex, closest.yIndex, this.nextColor, 'placed'));
       this.switchNextColor();
@@ -249,9 +262,54 @@ class Goban {
     if (!closest.mouseIsOn) {
       return;
     }
+    if (this.getInputMode() === 'text') {
+      // show text-input mordal.
+      document.getElementById('stone-note-input').classList.add('is-open')
+      document.getElementById('mordal-background').classList.add('is-open')
+
+      // save xIndex and yIndex in order that entered text is applied to the corresponding point.
+      this.pointNoteBeEntered.xIndex = closest.xIndex;
+      this.pointNoteBeEntered.yIndex = closest.yIndex;
+
+      // set the current `this.notes[yIndex][xIndex]` to the text input.
+      let noteInput = document.getElementById('stone-note-input');
+      noteInput.value = this.notes[closest.yIndex][closest.xIndex];
+
+      // focus and select all.
+      /* NOTE:
+       * `document.activeElement` doesn't change even after `focus()` and `select()` without `setTimeout`.
+       * This seems to be occurred because this method `onDoubleClick` is called by the event listener.
+       * Also, if the timeout value is small enough (10, for instance), then `document.activeElement` may not change.
+       */
+      setTimeout(function () {
+        //console.log(noteInput);
+        noteInput.focus();
+        //console.log(document.activeElement);
+        noteInput.select();
+        //console.log(document.activeElement);
+      }, 40);
+
+      return;
+    }
+    console.assert(this.getInputMode() === 'normal');
     if (this.stones[closest.yIndex][closest.xIndex] !== null) {
       this.removeStone(closest.xIndex, closest.yIndex);
     }
+  }
+
+  enterNote(e) {
+    console.log(e);
+    // stop the process of `submit` and prevent the page from being reloaded.
+    e.stopPropagation();
+    e.preventDefault();
+
+    // hide input-text mordal.
+    document.getElementById('stone-note-input').classList.remove('is-open')
+    document.getElementById('mordal-background').classList.remove('is-open')
+
+    let xIndex = this.pointNoteBeEntered.xIndex;
+    let yIndex = this.pointNoteBeEntered.yIndex;
+    this.setNote(document.getElementById('stone-note-input').value, xIndex, yIndex);
   }
 }
 
@@ -260,6 +318,9 @@ canvas.addEventListener('mousemove', e => { goban.onMouseMove(e); }, false);
 canvas.addEventListener('mouseout', e => { goban.onMouseOut(e); }, false);
 canvas.addEventListener('mouseup', e => { goban.onMouseUp(e); }, false);
 canvas.addEventListener('dblclick', e => { goban.onDoubleClick(e); }, false);
+
+let noteForm = document.getElementById('stone-note-form');
+noteForm.addEventListener('submit', e => { goban.enterNote(e) });
 
 let test = function () {
   goban.addStone(new Stone(0, 0, 'white'));

@@ -193,9 +193,9 @@ class Goban {
   }
 
   getClosestPointIfMouseIsOn(e) {
-    //let rect = canvas.getBoundingClientRect();
-    let x = e.layerX;  // e.clientX - rect.left;
-    let y = e.layerY;  // e.clientY - rect.top;
+    let rect = canvas.getBoundingClientRect();
+    let x = e.clientX - rect.left;  // e.layerX;
+    let y = e.clientY - rect.top;  // e.layerY;
     let ret = { mouseIsOn: true, xIndex: 0, x: xyval[0], yIndex: 0, y: xyval[0] };
     for (let [i, val] of xyval.entries()) {
       if (Math.abs(x - val) < Math.abs(x - ret.x)) {

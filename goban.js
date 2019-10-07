@@ -2,6 +2,7 @@
 "use strict";
 
 let canvas = document.getElementById('goban');
+canvas.onselectstart = function () { return false; }  // https://stackoverflow.com/questions/3684285/how-to-prevent-text-select-outside-html5-canvas-on-double-click
 let context = canvas.getContext('2d');
 let retinaScale = 4.0;
 let cellLength = 40;

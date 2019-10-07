@@ -39,6 +39,7 @@ class Goban {
   constructor() {
     //this.hands = new Hands();
     this.inputMode = 1;
+    this.nextColor = 'black';
     this.stones = (new Array(linesNumber)).fill(null).map(() => (new Array(linesNumber)).fill(null));
     this.stonePreview = null;
     this.notes = (new Array(linesNumber)).fill(null).map(() => (new Array(linesNumber)).fill(null));
@@ -66,6 +67,16 @@ class Goban {
         context.arc(x, y, 3.0, 0, Math.PI * 2);
         context.fill();
       }
+    }
+  }
+
+  switchNextColor() {
+    if (this.nextColor === 'black') {
+      this.nextColor = 'white';
+    } else if (this.nextColor === 'white') {
+      this.nextColor = 'black';
+    } else {
+      console.assert(false);
     }
   }
 
@@ -153,6 +164,11 @@ class Goban {
     this.updateBoard();
   }
 
+  clearStonePreview() {
+    this.stonePreview = null;
+    this.updateBoard();
+  }
+
   isValidNote(note) {
     if (note.length > 3) {
       return false;
@@ -172,23 +188,70 @@ class Goban {
     this.notes[y][x] = note;
     this.updateBoard();
   }
+
+  getClosestPointIfMouseIsOn(e) {
+    //let rect = canvas.getBoundingClientRect();
+    let x = e.layerX;  // e.clientX - rect.left;
+    let y = e.layerY;  // e.clientY - rect.top;
+    let ret = { mouseIsOn: true, xIndex: 0, x: xyval[0], yIndex: 0, y: xyval[0] };
+    for (let [i, val] of xyval.entries()) {
+      if (Math.abs(x - val) < Math.abs(x - ret.x)) {
+        ret.xIndex = i;
+        ret.x = val;
+      }
+      if (Math.abs(y - val) < Math.abs(y - ret.y)) {
+        ret.yIndex = i;
+        ret.y = val;
+      }
+    }
+    if (Math.hypot(ret.x - x, ret.y - y) > stoneSemidiameter) {
+      ret.mouseIsOn = false;
+    }
+    return ret;
+  }
+
+  onMouseMove(e) {
+    let closest = this.getClosestPointIfMouseIsOn(e);
+    if (closest.mouseIsOn) {
+      this.addStonePreview(new Stone(closest.xIndex, closest.yIndex, this.nextColor, 'preview'));
+    } else {
+      this.clearStonePreview();
+    }
+  }
+
+  onMouseOut(e) {
+    this.clearStonePreview();
+  }
+
+  onMouseUp(e) {
+    console.log(e);
+    let closest = this.getClosestPointIfMouseIsOn(e);
+    if (closest.mouseIsOn) {
+      this.addStone(new Stone(closest.xIndex, closest.yIndex, this.nextColor, 'placed'));
+      this.switchNextColor();
+    }
+  }
 }
 
 let goban = new Goban();
-goban.addStone(new Stone(0, 0, 'white'));
-goban.addStone(new Stone(1, 0, 'white'));
-goban.addStone(new Stone(2, 0, 'white'));
-goban.addStone(new Stone(0, 1, 'black'));
-goban.addStone(new Stone(1, 1, 'black'));
-goban.addStone(new Stone(2, 1, 'black'));
-goban.addNote('7', 0, 0);
-goban.addNote('77', 1, 0);
-goban.addNote('777', 2, 0);
-goban.addNote('7', 0, 1);
-goban.addNote('77', 1, 1);
-goban.addNote('777', 2, 1);
 
-//goban.addStonePreview(new Stone(2, 2, 'white', 'preview'));
-goban.addStonePreview(new Stone(3, 2, 'black', 'preview'));
-goban.addNote('C', 2, 2);
-goban.addNote('D', 3, 2);
+let test = function () {
+  goban.addStone(new Stone(0, 0, 'white'));
+  goban.addStone(new Stone(1, 0, 'white'));
+  goban.addStone(new Stone(2, 0, 'white'));
+  goban.addStone(new Stone(0, 1, 'black'));
+  goban.addStone(new Stone(1, 1, 'black'));
+  goban.addStone(new Stone(2, 1, 'black'));
+  goban.addNote('7', 0, 0);
+  goban.addNote('77', 1, 0);
+  goban.addNote('777', 2, 0);
+  goban.addNote('7', 0, 1);
+  goban.addNote('77', 1, 1);
+  goban.addNote('777', 2, 1);
+  goban.addNote('C', 2, 2);
+  goban.addNote('D', 3, 2);
+};
+
+canvas.addEventListener('mousemove', e => { goban.onMouseMove(e); }, false);
+canvas.addEventListener('mouseout', e => { goban.onMouseOut(e); }, false);
+canvas.addEventListener('mouseup', e => { goban.onMouseUp(e); }, false);

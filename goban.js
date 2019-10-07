@@ -42,7 +42,7 @@ class Goban {
     this.nextColor = 'black';
     this.stones = (new Array(linesNumber)).fill(null).map(() => (new Array(linesNumber)).fill(null));
     this.stonePreview = null;
-    this.notes = (new Array(linesNumber)).fill(null).map(() => (new Array(linesNumber)).fill(null));
+    this.notes = (new Array(linesNumber)).fill(null).map(() => (new Array(linesNumber)).fill(''));
     this.initializeBoard();
   }
 
@@ -136,7 +136,7 @@ class Goban {
     }
     for (let yIndex = 0; yIndex < linesNumber; ++yIndex) {
       for (let xIndex = 0; xIndex < linesNumber; ++xIndex) {
-        if (this.notes[yIndex][xIndex] !== null) {
+        if (this.notes[yIndex][xIndex] !== null && this.notes[yIndex][xIndex].length > 0) {
           this.drawNote(this.notes[yIndex][xIndex], xIndex, yIndex);
         }
       }
@@ -184,13 +184,10 @@ class Goban {
     return RegExp(/^[0-9]*$/).test(note);
   }
 
-  addNote(note, x, y) {
-    if (note.length === 0) {
-      this.notes[y][x] = null;
-      return;
+  setNote(note, x, y) {
+    if (this.isValidNote(note)) {
+      this.notes[y][x] = note;
     }
-    console.assert(this.isValidNote(note));
-    this.notes[y][x] = note;
     this.updateBoard();
   }
 
@@ -266,13 +263,13 @@ let test = function () {
   goban.addStone(new Stone(0, 1, 'black'));
   goban.addStone(new Stone(1, 1, 'black'));
   goban.addStone(new Stone(2, 1, 'black'));
-  goban.addNote('7', 0, 0);
-  goban.addNote('77', 1, 0);
-  goban.addNote('777', 2, 0);
-  goban.addNote('7', 0, 1);
-  goban.addNote('77', 1, 1);
-  goban.addNote('777', 2, 1);
-  goban.addNote('C', 2, 2);
-  goban.addNote('D', 3, 2);
+  goban.setNote('7', 0, 0);
+  goban.setNote('77', 1, 0);
+  goban.setNote('777', 2, 0);
+  goban.setNote('7', 0, 1);
+  goban.setNote('77', 1, 1);
+  goban.setNote('777', 2, 1);
+  goban.setNote('C', 2, 2);
+  goban.setNote('D', 3, 2);
 };
 

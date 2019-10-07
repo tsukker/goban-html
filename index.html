@@ -9,8 +9,20 @@
 </head>
 
 <body>
-  <div>
-    <canvas id='goban'> Use Google Chrome or Firefox. </canvas>
+  <div style="display:table; width:100%;">
+    <div style="display:table-cell; text-align:center; vertical-align:top;">
+      入力モード:
+      <form id='input-mode-form'>
+        <input id='input-mode-normal' type='radio' name='input-mode' value='normal' checked>
+        <label for='input-mode-normal'>碁石</label>
+        <input id='input-mode-text' type='radio' name='input-mode' value='text'>
+        <label for='input-mode-text'>テキスト</label>
+      </form>
+    </div>
+
+    <div style="display:table-cell;">
+      <canvas id='goban'> Use Google Chrome or Firefox. </canvas>
+    </div>
   </div>
 </body>
 

@@ -213,6 +213,10 @@ class Goban {
     return ret;
   }
 
+  getInputMode() {
+    return document.getElementById('input-mode-form')['input-mode'].value;
+  }
+
   onMouseMove(e) {
     let closest = this.getClosestPointIfMouseIsOn(e);
     if (!closest.mouseIsOn) {

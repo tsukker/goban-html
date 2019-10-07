@@ -164,6 +164,10 @@ class Goban {
   }
 
   addNote(note, x, y) {
+    if (note.length === 0) {
+      this.notes[y][x] = null;
+      return;
+    }
     console.assert(this.isValidNote(note));
     this.notes[y][x] = note;
     this.updateBoard();

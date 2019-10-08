@@ -1,5 +1,9 @@
 /* https://www.nxworld.net/tips/10-css-overlay-effects.html */
 
+* {
+    font-family: sans-serif;
+}
+
 input.stone-note {
     position: fixed;
     top: 50%;
@@ -45,4 +49,9 @@ input.stone-note:hover {
 .mordal-background.is-open {
     opacity: 1;
     visibility: visible;
+}
+
+.next-stone, .next-stone * {
+    font-family: monospace;
+    font-size: x-large;
 }

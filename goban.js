@@ -48,7 +48,7 @@ class Goban {
   constructor() {
     //this.hands = new Hands();
     this.inputMode = 1;
-    this.nextColor = 'black';
+    this.setNextColor('black');
     this.stones = (new Array(linesNumber)).fill(null).map(() => (new Array(linesNumber)).fill(null));
     this.stonePreview = null;
     this.notes = (new Array(linesNumber)).fill(null).map(() => (new Array(linesNumber)).fill(''));
@@ -80,11 +80,25 @@ class Goban {
     }
   }
 
+  setNextColor(color) {
+    console.assert(color === 'black' || color === 'white');
+    this.nextColor = color;
+    var stoneEmoji = '';
+    if (color === 'black') {
+      stoneEmoji = '●';
+    } else if (color === 'white') {
+      stoneEmoji = '○';
+    } else {
+      console.assert(false, "`color` must be either 'black' or 'white'");
+    }
+    document.getElementById('next-stone-color').textContent = stoneEmoji;
+  }
+
   switchNextColor() {
     if (this.nextColor === 'black') {
-      this.nextColor = 'white';
+      this.setNextColor('white');
     } else if (this.nextColor === 'white') {
-      this.nextColor = 'black';
+      this.setNextColor('black');
     } else {
       console.assert(false);
     }

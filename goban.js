@@ -334,7 +334,10 @@ canvas.addEventListener('mouseup', e => { goban.onMouseUp(e); }, false);
 canvas.addEventListener('dblclick', e => { goban.onDoubleClick(e); }, false);
 
 let noteForm = document.getElementById('stone-note-form');
-noteForm.addEventListener('submit', e => { goban.enterNote(e) });
+noteForm.addEventListener('submit', e => { goban.enterNote(e); });
+
+let switchColorButton = document.getElementById('switch-color-button');
+switchColorButton.addEventListener('click', e => { goban.switchNextColor(); }, false);
 
 let test = function () {
   goban.addStone(new Stone(0, 0, 'white'));

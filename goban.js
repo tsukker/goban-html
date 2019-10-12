@@ -84,14 +84,15 @@ class Goban {
     console.assert(color === 'black' || color === 'white');
     this.nextColor = color;
     var stoneEmoji = '';
+    var backgroundColor = '';
     if (color === 'black') {
-      stoneEmoji = '●';
+      backgroundColor = 'black';
     } else if (color === 'white') {
-      stoneEmoji = '○';
+      backgroundColor = 'white';
     } else {
       console.assert(false, "`color` must be either 'black' or 'white'");
     }
-    document.getElementById('next-stone-color').textContent = stoneEmoji;
+    document.getElementById('next-stone-color').style.background = backgroundColor;
   }
 
   switchNextColor() {

@@ -51,7 +51,16 @@ input.stone-note:hover {
     visibility: visible;
 }
 
-.next-stone, .next-stone * {
-    font-family: monospace;
+.next-stone {
     font-size: x-large;
+}
+
+.next-stone-color {
+    display: inline-flex;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    vertical-align: text-top;
+    border: solid 1px black;
+    background: black;
 }
